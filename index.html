@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultra Love Universe 3D</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #ffffff;
+    font-family: Arial;
+    perspective: 1000px; /* 🔥 3D ENABLE */
+}
+
+/* BUTTON */
+#startBtn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    padding: 36px 60px;
+    font-size: 36px;
+    
+    border: none;
+    border-radius: 28px;
+    
+    background: linear-gradient(45deg,#ff4d6d,#ff99cc);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 25px pink;
+}
+
+/* 3D LOVE */
+.love {
+    position: absolute;
+    font-size: 60px;
+    font-weight: 900;
+    color: #ff4d6d;
+    user-select: none;
+    cursor: pointer;
+
+    text-shadow: 0 0 10px rgba(255,77,109,0.5);
+
+    transform-style: preserve-3d;
+    transition: transform 0.2s;
+}
+
+/* FLOATING BIG HEART */
+.floatHeart {
+    position: absolute;
+    font-size: 80px;
+    font-weight: bold;
+    pointer-events: none;
+    animation: floatUp 2.5s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(0.5) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-250px) scale(2) rotate(360deg);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<button id="startBtn">এই যে মেডাম এইখানে চাপ দেন ❤️</button>
+
+<script>
+
+let loves = [];
+const SIZE = 100;
+
+/* CREATE LOVE */
+function createLove() {
+    const el = document.createElement("div");
+    el.className = "love";
+    el.innerText = "I Love You 💖";
+
+    let x = Math.random() * (window.innerWidth - 120);
+    let y = Math.random() * (window.innerHeight - 120);
+
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+
+    el.vx = (Math.random() - 0.5) * 2;
+    el.vy = (Math.random() - 0.5) * 2;
+    el.vz = (Math.random() - 0.5) * 2;
+
+    /* CLICK → BIG FLOAT HEART */
+    el.onclick = (e) => {
+        e.stopPropagation();
+        spawnFloatHeart(x, y);
+    };
+
+    document.body.appendChild(el);
+    loves.push(el);
+}
+
+/* 3D ANIMATION */
+function animate() {
+    for (let el of loves) {
+
+        let x = parseFloat(el.style.left);
+        let y = parseFloat(el.style.top);
+
+        x += el.vx;
+        y += el.vy;
+
+        if (x < 0 || x > window.innerWidth - 100) el.vx *= -1;
+        if (y < 0 || y > window.innerHeight - 100) el.vy *= -1;
+
+        /* 🔥 3D tilt effect */
+        let rotX = el.vy * 5;
+        let rotY = el.vx * 5;
+
+        el.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+    }
+
+    requestAnimationFrame(animate);
+}
+
+/* FLOATING HEART ON CLICK */
+function spawnFloatHeart(x, y) {
+    for (let i = 0; i < 8; i++) {
+        const h = document.createElement("div");
+        h.className = "floatHeart";
+        h.innerText = "💖";
+
+        h.style.left = x + "px";
+        h.style.top = y + "px";
+
+        let drift = (Math.random() - 0.5) * 200;
+        h.style.transform = `translateX(${drift}px)`;
+
+        document.body.appendChild(h);
+
+        setTimeout(() => h.remove(), 2500);
+    }
+}
+
+/* START */
+document.getElementById("startBtn").onclick = () => {
+    document.getElementById("startBtn").style.display = "none";
+
+    for (let i = 0; i < 25; i++) {
+        createLove();
+    }
+
+    animate();
+};
+
+</script>
+
+</body>
+</html>
